@@ -12,6 +12,41 @@ model = bundle['model']
 history_scores = bundle['history_scores']
 features = bundle['features']
 
+# Required fields for the incoming transactions
+REQUIRED_COLUMNS = [
+    "transaction_id",
+    "amount",
+    "customer_typical_amount",
+    "transactions_last_hour",
+    "minutes_since_previous",
+    "account_age_days"
+]
+NUMERIC_COLUMNS = REQUIRED_COLUMNS[1:]
+
+def validate_transaction(record):
+    transaction_id = record.get("transaction_id")
+    if pd.isna(transaction_id) or not str(transaction_id).strip():
+        return "missing transaction ID"
+    values = {}
+    for column in NUMERIC_COLUMNS:
+        value = pd.to_numeric(record.get(column), errors="coerce")
+        if pd.isna(value) or not np.isfinite(value):
+            return f"missing or non-numeric value in '{column}'"
+        values[column] = float(value)
+    if values["amount"] <= 0:
+        return "amount must be greater than zero"
+    if values["customer_typical_amount"] <= 0:
+        return "customer's typical amount must be greater than zero"
+    for column in [
+        "transactions_last_hour",
+        "minutes_since_previous",
+        "account_age_days",
+    ]:
+        if values[column] < 0:
+            return f"'{column}' cannot be negative"
+    if not values["transactions_last_hour"].is_integer():
+        return "'transactions_last_hour' must be a whole number"
+    return None
 
 def score(amount, typical, last_hour, gap, age):
     """Turn one transaction into the five features and return its anomaly score."""
