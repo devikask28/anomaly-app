@@ -87,7 +87,7 @@ with tab1:
         s = score(amount, typical, last_hour, gap, age)
         if s > cutoff:
             st.error(
-                f'**UNUSUAL — HUMAN REVIEW RECOMMENDED** (score {s:.3f}, cutoff {cutoff:.3f})\n\n'
+                f'**UNUSUAL - HUMAN REVIEW RECOMMENDED** (score {s:.3f}, cutoff {cutoff:.3f})\n\n'
                 'This transaction is unusual compared with past transactions. That does not '
                 'mean it is fraud. **Next step:** investigate it, for example by checking the '
                 'account history or contacting the customer, before taking any action.'
