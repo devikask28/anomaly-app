@@ -86,14 +86,14 @@ with tab1:
     if st.button('Score this transaction'):
         s = score(amount, typical, last_hour, gap, age)
         if s > cutoff:
-            st.warning(
+            st.error(
                 f'**UNUSUAL — HUMAN REVIEW RECOMMENDED** (score {s:.3f}, cutoff {cutoff:.3f})\n\n'
                 'This transaction is unusual compared with past transactions. That does not '
                 'mean it is fraud. **Next step:** investigate it, for example by checking the '
                 'account history or contacting the customer, before taking any action.'
             )
         else:
-            st.info(
+            st.success(
                 f'**NO UNUSUAL PATTERN DETECTED** (score {s:.3f}, cutoff {cutoff:.3f})\n\n'
                 'This transaction looks ordinary compared with past transactions. That does '
                 'not mean it is legitimate. **Next step:** no review is required by the model, '
@@ -141,9 +141,9 @@ with tab2:
                                 'typical': r['customer_typical_amount'],
                                 'last_hour': r['transactions_last_hour'],
                                 'score': round(s, 3)})
-                box.warning(msg + '  ->  UNUSUAL, review recommended (not confirmed fraud)')
+                box.error(msg + '  ->  UNUSUAL, review recommended (not confirmed fraud)')
             else:
-                box.info(msg + '  ->  no unusual pattern (not an approval)')
+                box.success(msg + '  ->  no unusual pattern (not an approval)')
             counts.write(f'Received **{i + 1}** of {len(stream)}.  '
                          f'Sent to review: **{len(flagged)}**')
             if flagged:
